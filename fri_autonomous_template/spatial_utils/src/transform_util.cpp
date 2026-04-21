@@ -54,22 +54,22 @@ geometry_msgs::msg::TransformStamped matrixToTransform(
     transform_msg.header.stamp = rclcpp::Time(0, 0);                        // Added something to set time
     // printTransform("go_to", transform_msg);
 
-    // transform_msg.transform.translation.x = matrix(0, 3);
-    // transform_msg.transform.translation.y = matrix(1, 3);
-    // transform_msg.transform.translation.z = matrix(2, 3);
-    transform_msg.transform.translation.x = 0.1;
-    transform_msg.transform.translation.y = 0;
-    transform_msg.transform.translation.z = 0;
+    transform_msg.transform.translation.x = matrix(0, 3);
+    transform_msg.transform.translation.y = matrix(1, 3);
+    transform_msg.transform.translation.z = matrix(2, 3);
+    // transform_msg.transform.translation.x = 0.1;
+    // transform_msg.transform.translation.y = 0;
+    // transform_msg.transform.translation.z = 0;
 
     const Eigen::Quaterniond quat(matrix.block<3, 3>(0, 0));
-    // transform_msg.transform.rotation.x = quat.x();
-    // transform_msg.transform.rotation.y = quat.y();
-    // transform_msg.transform.rotation.z = quat.z();
-    // transform_msg.transform.rotation.w = quat.w();
-    transform_msg.transform.rotation.x = 0;
-    transform_msg.transform.rotation.y = 0;
-    transform_msg.transform.rotation.z = 0;
-    transform_msg.transform.rotation.w = 1;
+    transform_msg.transform.rotation.x = quat.x();
+    transform_msg.transform.rotation.y = quat.y();
+    transform_msg.transform.rotation.z = quat.z();
+    transform_msg.transform.rotation.w = quat.w();
+    // transform_msg.transform.rotation.x = 0;
+    // transform_msg.transform.rotation.y = 0;
+    // transform_msg.transform.rotation.z = 0;
+    // transform_msg.transform.rotation.w = 1;
 
     return transform_msg;
 }

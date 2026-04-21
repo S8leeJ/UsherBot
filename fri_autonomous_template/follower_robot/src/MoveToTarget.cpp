@@ -1,6 +1,5 @@
 #include "follower_robot/MoveToTarget.h"
 
-//I have implemented the entire constructor for you.
 MoveToTarget::MoveToTarget(rclcpp::Node *node) :
     node_(node),
     send_goal_options_(rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions()) {
@@ -10,7 +9,6 @@ MoveToTarget::MoveToTarget(rclcpp::Node *node) :
         RCLCPP_INFO(node_->get_logger(), "Waiting for Nav2 action server...");
     }
 
-    // send_goal_options.goal_response_callback = goal_response_callback;
     send_goal_options_.goal_response_callback =
         std::bind(&MoveToTarget::goal_response_callback, this,
             std::placeholders::_1);
@@ -21,12 +19,6 @@ MoveToTarget::MoveToTarget(rclcpp::Node *node) :
 
 MoveToTarget::~MoveToTarget() {}
 
-/*
-    I set the goal response and result callbacks for you. You don't really
-        need them, but you may want to use them to print some I/O during
-        operation for debugging. I figured you wouldn't need the feedback
-        callback, so I didn't implement it.
-*/
 void MoveToTarget::goal_response_callback(
     std::shared_ptr<rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>> goal_handle) {
     if (!goal_handle) {
@@ -40,19 +32,6 @@ void MoveToTarget::result_callback(
     const rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult &result) {
 }
 
-/*
-    You want to send the navigation goal as a
-        nav2_msgs::action::NavigateToPose::Goal, expressed relative to
-        base_link.
-    Step one. Fill in the PoseStamped.
-    You can get the quaternion terms for the orientation using
-        Eigen::Quaterniond
-    The translational terms you can pull out of the right column of the input
-        4x4 rigid transformation matrix.
-    Set goal_pose.header.stamp.                                                    
-    Stuff the goal_pose into the goal_msg. 
-    Call client_->async_send_goal to send it along.
-*/
 // This looks good - Jason
 void MoveToTarget::copyToGoalPoseAndSend(
     Eigen::MatrixXd &goal_pose_relative_to_base_link            // given a rigid transform in 4x4 matrix
