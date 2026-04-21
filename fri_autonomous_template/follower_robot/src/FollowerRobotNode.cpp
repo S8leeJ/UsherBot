@@ -9,14 +9,14 @@
 using namespace std;
 
 FollowerRobotNode::FollowerRobotNode(
-    double target_x,
-    double target_y):
+    double target_x = 5.0,
+    double target_y = 3.0):
     Node("follower_robot_node"),
     move_to_target_(this),
     tf_buffer_(this->get_clock()),
     tf_listener_(tf_buffer_),
     tf_broadcaster_(this),
-    m_base_link_to_go_to(Eigen::Matrix4d::Identity())
+    m_base_link_to_go_to_(Eigen::Matrix4d::Identity())
 {
     // everytime timer fires (every 100 ms), computeAndAct is called
     timer_ = this->create_wall_timer(
