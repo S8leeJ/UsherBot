@@ -141,7 +141,7 @@ export default function Home() {
   const handleCheckIn = async (reservation: Reservation) => {
     setCheckin({ phase: 'navigating', reservation });
     try {
-      await sendNavGoal(reservation.x_coord, reservation.y_coord, async (result: NavResult) => {
+      await sendNavGoal(reservation.id, async (result: NavResult) => {
         if (result === 'succeeded') {
           await supabase
             .from('requests')

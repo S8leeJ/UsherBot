@@ -1,3 +1,5 @@
+import { supabase } from '@/lib/supabase';
+
 export type NavResult = 'succeeded' | 'aborted' | 'rejected' | 'canceled' | 'failed';
 
 const TERMINAL: ReadonlySet<string> = new Set([
@@ -8,50 +10,42 @@ const TERMINAL: ReadonlySet<string> = new Set([
   'failed',
 ]);
 
-function bridgeBaseUrl(): string {
-  const raw = process.env.NEXT_PUBLIC_ROSBRIDGE_URL || 'http://localhost:9090';
-  return raw.replace(/^ws/, 'http');
-}
-
 export async function sendNavGoal(
-  x: number,
-  y: number,
+  reservationId: string,
   onResult: (result: NavResult) => void,
 ): Promise<() => void> {
-  const base = bridgeBaseUrl();
-
-  const res = await fetch(`${base}/goal`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ x, y }),
-  });
-  if (!res.ok) {
-    throw new Error(`Bridge returned ${res.status}`);
-  }
-  const { goal_id } = (await res.json()) as { goal_id: string };
+  const { error } = await supabase
+    .from('requests')
+    .update({ nav_status: 'pending' })
+    .eq('id', reservationId);
+  if (error) throw new Error(error.message);
 
   let cancelled = false;
-  const poll = async () => {
+  void (async () => {
     while (!cancelled) {
       await new Promise((r) => setTimeout(r, 1000));
       if (cancelled) return;
-      try {
-        const sres = await fetch(`${base}/status/${goal_id}`);
-        if (!sres.ok) continue;
-        const data = (await sres.json()) as { status: string; reason?: string };
-        if (TERMINAL.has(data.status)) {
-          onResult(data.status as NavResult);
-          return;
-        }
-      } catch {
-        // network blip — keep polling
+      const { data, error } = await supabase
+        .from('requests')
+        .select('nav_status')
+        .eq('id', reservationId)
+        .single();
+      if (error || !data) continue;
+      const status = data.nav_status as string;
+      if (TERMINAL.has(status)) {
+        onResult(status as NavResult);
+        return;
       }
     }
-  };
-  void poll();
+  })();
 
   return () => {
     cancelled = true;
-    void fetch(`${base}/cancel/${goal_id}`, { method: 'POST' }).catch(() => {});
+    void supabase
+      .from('requests')
+      .update({ nav_status: 'idle' })
+      .eq('id', reservationId)
+      .eq('nav_status', 'pending')
+      .then(() => {});
   };
 }
