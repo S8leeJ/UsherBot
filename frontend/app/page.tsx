@@ -528,20 +528,20 @@ export default function Home() {
             className="fixed inset-0 bg-gray-900/40 z-40"
             onClick={closeReservationModal}
           />
-          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-              <div className="flex justify-between items-center mb-6">
+          <div className="fixed inset-0 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+            <div className="w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-xl p-5 sm:p-8 max-h-[92vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-5 sm:mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">New Reservation</h2>
                 <button
                   onClick={closeReservationModal}
-                  className="text-gray-400 hover:text-gray-700 text-2xl leading-none"
+                  className="text-gray-400 hover:text-gray-700 text-3xl leading-none w-10 h-10 flex items-center justify-center -mr-2"
                   aria-label="Close"
                 >
                   ×
                 </button>
               </div>
               <form onSubmit={handleCreateReservation} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label htmlFor="start_time" className="block text-sm font-medium text-gray-700 mb-2">
                       Start Time
@@ -552,7 +552,7 @@ export default function Home() {
                       value={startTime}
                       onChange={(e) => onStartTimeChange(e.target.value)}
                       required
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base text-gray-900 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50"
                     />
                   </div>
                   <div>
@@ -565,7 +565,7 @@ export default function Home() {
                       value={endTime}
                       onChange={(e) => onEndTimeChange(e.target.value)}
                       required
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base text-gray-900 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50"
                     />
                   </div>
                 </div>
@@ -573,9 +573,9 @@ export default function Home() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Select a Seat
                   </label>
-                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
+                  <div className="p-3 sm:p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
                     {[1, 2].map((row) => (
-                      <div key={row} className="flex justify-center gap-2">
+                      <div key={row} className="grid grid-cols-3 gap-2">
                         {SEATS.filter((s) => s.row === row).map((s) => {
                           const isSelected = selectedSeat === s.seat;
                           const busy = isSeatBusy(s.seat, startTime, endTime);
@@ -586,12 +586,12 @@ export default function Home() {
                               disabled={busy}
                               onClick={() => setSelectedSeat(s.seat)}
                               title={busy ? 'Already reserved for this time' : `Seat ${s.seat}`}
-                              className={`w-16 h-16 rounded-lg font-semibold text-lg transition border-2 ${
+                              className={`aspect-square rounded-lg font-semibold text-lg transition border-2 ${
                                 busy
                                   ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed line-through'
                                   : isSelected
                                   ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                                  : 'bg-white border-gray-200 text-gray-700 hover:border-blue-300'
+                                  : 'bg-white border-gray-200 text-gray-700 hover:border-blue-300 active:bg-gray-50'
                               }`}
                             >
                               {s.seat}
